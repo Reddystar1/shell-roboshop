@@ -73,11 +73,11 @@ cp $SCRIPT_DIR/mongo.repo /etc/yum.repos.d/mongo.repo
 VALIDATE $? "Copy mongo repo"
 
 dnf install mongodb-mongosh -y &>>$LOG_FILE
-VALIDATE $? "Install Mongodb client"
+VALIDATE $? "Install MongoDB client"
 
-mongo --host $MONGODB_HOST < /app/schema/catalogue.js &>>$LOG_FILE
+#mongo --host $MONGODB_HOST < /app/schema/catalogue.js &>>$LOG_FILE
 
-#mongosh --host $MONGODB_HOST < /app/db/master-data.js &>>$LOG_FILE
+mongosh --host $MONGODB_HOST < /app/db/master-data.js &>>$LOG_FILE
 VALIDATE $? "Load catalogue products"
 
 systemctl restart catalogue
