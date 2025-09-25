@@ -7,7 +7,7 @@ G="\e[32m"
 Y="\e[33m"
 N="\e[0m"
 
-LOGS_FOLDER="/var/log/shell-script"
+LOGS_FOLDER="/var/log/shell-roboshop"
 SCRIPT_NAME=$( echo $0 | cut -d "." -f1 )
 LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log" # /var/log/shell-script/16-logs.log
 
@@ -32,16 +32,16 @@ cp mongo.repo /etc/yum.repos.d/mongo.repo
 VALIDATE $? "Adding Mongo repo"
 
 dnf install mongodb-org -y &>>$LOG_FILE
-VALIDATE $? "Installing Mongodb"
+VALIDATE $? "Installing MongoDB"
 
-systemctl enable mongod 
-VALIDATE $? "enable Mongodb"
+systemctl enable mongod &>>$LOG_FILE
+VALIDATE $? "Enable MongoDB"
 
 systemctl start mongod 
-VALIDATE $? "Start Mongodb"
+VALIDATE $? "Start MongoDB"
 
 sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mongod.conf
-VALIDATE $? "Allowing remote connections to Mongodb"
+VALIDATE $? "Allowing remote connections to MongoDB"
 
 systemctl restart mongod
-VALIDATE $? "Restarted Mongodb"
+VALIDATE $? "Restarted MongoDB"
