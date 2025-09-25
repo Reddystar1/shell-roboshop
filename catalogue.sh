@@ -36,27 +36,35 @@ VALIDATE $? "Enable nodejs:20"
 dnf install nodejs -y &>>$LOG_FILE
 VALIDATE $? "Install nodejs -y"
 
-id roboshop
+id roboshop &>>$LOG_FILE
 if [$? -ne 0 ]; then
     useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$LOG_FILE
     VALIDATE $? "Creating system user"
 else
-    echo "user already exist ..$Y SKIPPING$N"
+    echo -e "user already exist ..$Y SKIPPING$N"
 fi
 mkdir -p /app 
 VALIDATE $? "Creating app directory"
+
 curl -o /tmp/catalogue.zip https://roboshop-artifacts.s3.amazonaws.com/catalogue-v3.zip 
 VALIDATE $? "Downloding catalogue application"
+
 cd /app 
 VALIDATE $? "changing to app directory"
+
+rm -rf /app/*
+VALIDATE $? "removing existing code"
+
 unzip /tmp/catalogue.zip &>>$LOG_FILE
 VALIDATE $? "Unzip the catologue"
+
 npm install &>>$LOG_FILE
 VALIDATE $? "Install dependencies"
+
 cp  $SCRIPT_DIR/etc/systemd/system/catalogue.service
 VALIDATE $? "Copy systemctl servive"
-systemctl daemon-reload
 
+systemctl daemon-reload
 systemctl enable catalogue &>>$LOG_FILE 
 VALIDATE $? "Enable catalogue"
 
@@ -69,5 +77,6 @@ VALIDATE $? "Install Mongodb clint"
 
 mongosh --host $MONGODB_HOST </app/db/master-data.js &>>$LOG_FILE
 VALIDATE $? "Load catalogue products"
+
 systemctl Restart catalogue
 VALIDATE $? "Restarted catalogue"
