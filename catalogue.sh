@@ -61,7 +61,7 @@ VALIDATE $? "Unzip the catologue"
 npm install &>>$LOG_FILE
 VALIDATE $? "Install dependencies"
 
-cp $SCRIPT_DIR/catalogue.service/etc/systemd/system/catalogue.service
+cp $SCRIPT_DIR/catalogue.service /etc/systemd/system/catalogue.service
 VALIDATE $? "Copy systemctl service"
 
 systemctl daemon-reload
@@ -69,7 +69,7 @@ systemctl enable catalogue &>>$LOG_FILE
 VALIDATE $? "Enable catalogue"
 
 
-cp $SCRIPT_DIR/mongo.repo/etc/yum.repos.d/mongo.repo
+cp $SCRIPT_DIR/mongo.repo /etc/yum.repos.d/mongo.repo
 VALIDATE $? "Copy mongo repo"
 
 dnf install mongodb-mongosh -y &>>$LOG_FILE
@@ -78,5 +78,5 @@ VALIDATE $? "Install Mongodb clint"
 mongosh --host $MONGODB_HOST </app/db/master-data.js &>>$LOG_FILE
 VALIDATE $? "Load catalogue products"
 
-systemctl Restart catalogue
+systemctl restart catalogue
 VALIDATE $? "Restarted catalogue"
