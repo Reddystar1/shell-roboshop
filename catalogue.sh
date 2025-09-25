@@ -37,7 +37,7 @@ dnf install nodejs -y &>>$LOG_FILE
 VALIDATE $? "Install nodejs -y"
 
 id roboshop &>>$LOG_FILE
-if [$? -ne 0 ]; then
+if [ $? -ne 0 ]; then
     useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$LOG_FILE
     VALIDATE $? "Creating system user"
 else
@@ -61,7 +61,7 @@ VALIDATE $? "Unzip the catologue"
 npm install &>>$LOG_FILE
 VALIDATE $? "Install dependencies"
 
-cp  $SCRIPT_DIR/etc/systemd/system/catalogue.service
+cp $SCRIPT_DIR/etc/systemd/system/catalogue.service
 VALIDATE $? "Copy systemctl servive"
 
 systemctl daemon-reload
