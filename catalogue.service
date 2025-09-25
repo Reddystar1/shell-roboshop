@@ -7,7 +7,7 @@ Description = Catalogue Service
 User=roboshop
 Environment=MONGO=true
 // highlight-start
-Environment=MONGO_URL="mongodb://mongodb.daws86.space/catalogue"
+Environment=MONGO_URL="mongodb://mongodb.daws86.space:27017/catalogue"
 // highlight-end
 ExecStart=/bin/node /app/server.js
 SyslogIdentifier=catalogue
