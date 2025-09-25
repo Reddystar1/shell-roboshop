@@ -1,16 +1,17 @@
 #!bin/bash
 
-
 USERID=$(id -u)
 R="\e[31m"
 G="\e[32m"
 Y="\e[33m"
 N="\e[0m"
 
-LOGS_FOLDER="/var/log/shell-roboshop"
+LOGS_FOLDER="/var/log/shell-script"
 SCRIPT_NAME=$( echo $0 | cut -d "." -f1 )
+SCRIPT_DIR=$PWD
+MONGODB_HOST=mongodb.daws86.space
 LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log" # /var/log/shell-script/16-logs.log
-
+START_TIME=$(date +%s)
 mkdir -p $LOGS_FOLDER
 echo "Script started executed at: $(date)" | tee -a $LOG_FILE
 
@@ -19,7 +20,7 @@ if [ $USERID -ne 0 ]; then
     exit 1 # failure is other than 0
 fi
 
-VALIDATE() { # functions receive inputs through args just like shell script args
+VALIDATE(){ # functions receive inputs through args just like shell script args
     if [ $1 -ne 0 ]; then
         echo -e "$2 ... $R FAILURE $N" | tee -a $LOG_FILE
         exit 1
@@ -28,20 +29,18 @@ VALIDATE() { # functions receive inputs through args just like shell script args
     fi
 }
 
-cp mongo.repo /etc/yum.repos.d/mongo.repo
-VALIDATE $? "Adding Mongo repo"
+dnf install mysql-server -y
+VALIDATE $? "installing mysql-server -y"
 
-dnf install mongodb-org -y &>>$LOG_FILE
-VALIDATE $? "Installing MongoDB"
+systemctl enable mysqld
+VALIDATE $? "enable mysqld"
 
-systemctl enable mongod &>>$LOG_FILE
-VALIDATE $? "Enable MongoDB"
+systemctl start mysqld  
+VALIDATE $? "starting mysqld"
 
-systemctl start mongod 
-VALIDATE $? "Start MongoDB"
+mysql_secure_installation --set-root-pass RoboShop@1
+VALIDATE $? "setting up root password"
 
-sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mongod.conf
-VALIDATE $? "Allowing remote connections to MongoDB"
-
-systemctl restart mongod
-VALIDATE $? "Restarted MongoDB"
+END_TIME=$(date +%s)
+TOTAL_TIME=$(( $END_TIME -  $START_TIME ))
+echo -e "script exicuted in: $Y $TOTAL_TIME seconds $N"
