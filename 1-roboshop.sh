@@ -28,7 +28,7 @@ do
         ,"Changes": [{
         "Action"              : "UPSERT"
         ,"ResourceRecordSet"  : {
-            "Name"              : "$RECORD_NAME"
+            "Name"              : "'catalogue.daws86.space'"
             ,"Type"             : "A"
             ,"TTL"              : 1
             ,"ResourceRecords"  : [{
