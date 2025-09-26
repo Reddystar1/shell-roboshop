@@ -48,5 +48,8 @@ rm -rf /etc/nginx/nginx.conf
 cp $SCRIPT_DIR/nginx.conf /etc/nginx/nginx.conf
 VALIDATE $? "Copying nginx.conf"
 
+sudo systemctl status nginx -l
+
+
 systemctl restart nginx 
 VALIDATE $? "Restarting Nginx"
