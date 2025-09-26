@@ -51,6 +51,12 @@ else
     exit 1
 fi
 
+echo "172.31.xx.xx catalogue.daws86.space" | sudo tee -a /etc/hosts
+echo "172.31.yy.yy user.daws86.space" | sudo tee -a /etc/hosts
+echo "172.31.zz.zz cart.daws86.space" | sudo tee -a /etc/hosts
+echo "172.31.aa.aa shipping.daws86.space" | sudo tee -a /etc/hosts
+echo "172.31.bb.bb payment.daws86.space" | sudo tee -a /etc/hosts
+
 # Validate nginx config
 nginx -t &>>$LOG_FILE
 VALIDATE $? "Validating Nginx config"
