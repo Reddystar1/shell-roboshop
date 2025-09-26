@@ -31,15 +31,7 @@ VALIDATE(){ # functions receive inputs through args just like shell script args
 cp $SCRIPT_DIR/rabbitmq.repo /etc/yum.repos.d/rabbitmq.repo &>>$LOG_FILE
 VALIDATE $? "Adding RabbitMQ repo"
 
-sudo rpm --import https://packagecloud.io/rabbitmq/rabbitmq-server/gpgkey
-sudo tee /etc/yum.repos.d/rabbitmq.repo <<EOF
-[rabbitmq-server]
-name=rabbitmq-server
-baseurl=https://packagecloud.io/rabbitmq/rabbitmq-server/el/7/\$basearch
-gpgcheck=1
-gpgkey=https://packagecloud.io/rabbitmq/rabbitmq-server/gpgkey
-enabled=1
-EOF
+sudo nano /etc/yum.repos.d/rabbitmq.repo &>>$LOG_FILE
 
 
 
