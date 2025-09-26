@@ -70,7 +70,7 @@ VALIDATE $? "Allowing Remote connections to Redis"
 systemctl enable redis &>>$LOG_FILE
 VALIDATE $? "Enabling Redis"
 
-systemctl start redis &>>$LOG_FILE
+sudo systemctl start redis &>>$LOG_FILE
 VALIDATE $? "Starting Redis"
 
 END_TIME=$(date +%s)
