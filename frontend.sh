@@ -9,7 +9,6 @@ N="\e[0m"
 LOGS_FOLDER="/var/log/shell-roboshop"
 SCRIPT_NAME=$(basename $0 .sh)
 SCRIPT_DIR=$PWD
-MONGODB_HOST=mongodb.daws86.space
 LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log"
 
 mkdir -p $LOGS_FOLDER
@@ -29,20 +28,23 @@ VALIDATE() {
     fi
 }
 
+log_and_run() {
+    echo "$1" | tee -a $LOG_FILE
+    eval "$1" &>>$LOG_FILE
+    VALIDATE $? "$2"
+}
+
 # Install Nginx
-dnf module disable nginx -y &>>$LOG_FILE
-dnf module enable nginx:1.24 -y &>>$LOG_FILE
-dnf install nginx -y &>>$LOG_FILE
-VALIDATE $? "Installing Nginx"
+log_and_run "dnf module disable nginx -y" "Disabling default Nginx"
+log_and_run "dnf module enable nginx:1.24 -y" "Enabling Nginx module"
+log_and_run "dnf install nginx -y" "Installing Nginx"
 
 # Remove default content and deploy frontend
-rm -rf /usr/share/nginx/html/*
-curl -o /tmp/frontend.zip https://roboshop-artifacts.s3.amazonaws.com/frontend-v3.zip &>>$LOG_FILE
-cd /usr/share/nginx/html
-unzip /tmp/frontend.zip &>>$LOG_FILE
-VALIDATE $? "Downloading & Extracting frontend"
+log_and_run "rm -rf /usr/share/nginx/html/*" "Cleaning default frontend"
+log_and_run "curl -o /tmp/frontend.zip https://roboshop-artifacts.s3.amazonaws.com/frontend-v3.zip" "Downloading frontend"
+log_and_run "cd /usr/share/nginx/html && unzip /tmp/frontend.zip" "Extracting frontend"
 
-# Deploy custom nginx.conf
+# Deploy nginx.conf
 if [ -f $SCRIPT_DIR/nginx.conf ]; then
     cp $SCRIPT_DIR/nginx.conf /etc/nginx/nginx.conf
     VALIDATE $? "Copying nginx.conf"
@@ -51,17 +53,24 @@ else
     exit 1
 fi
 
-echo "172.31.xx.xx catalogue.daws86.space" | sudo tee -a /etc/hosts
-echo "172.31.yy.yy user.daws86.space" | sudo tee -a /etc/hosts
-echo "172.31.zz.zz cart.daws86.space" | sudo tee -a /etc/hosts
-echo "172.31.aa.aa shipping.daws86.space" | sudo tee -a /etc/hosts
-echo "172.31.bb.bb payment.daws86.space" | sudo tee -a /etc/hosts
+# Resolve microservice hostnames and inject into /etc/hosts
+MICROSERVICES=(catalogue user cart shipping payment)
+DOMAIN="daws86.space"
+
+for service in "${MICROSERVICES[@]}"; do
+    IP=$(dig +short "$service.$DOMAIN")
+    if [ -z "$IP" ]; then
+        echo -e "$R Could not resolve $service.$DOMAIN $N" | tee -a $LOG_FILE
+    else
+        echo "$IP $service.$DOMAIN" | sudo tee -a /etc/hosts
+        echo -e "$G Added $service.$DOMAIN -> $IP to /etc/hosts $N" | tee -a $LOG_FILE
+    fi
+done
 
 # Validate nginx config
 nginx -t &>>$LOG_FILE
 VALIDATE $? "Validating Nginx config"
 
 # Enable and start nginx
-systemctl enable nginx &>>$LOG_FILE
-systemctl restart nginx &>>$LOG_FILE
-VALIDATE $? "Enabling & Starting Nginx"
+log_and_run "systemctl enable nginx" "Enabling Nginx"
+log_and_run "systemctl restart nginx" "Restarting Nginx"
