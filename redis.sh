@@ -70,6 +70,11 @@ VALIDATE $? "Allowing Remote connections to Redis"
 systemctl enable redis &>>$LOG_FILE
 VALIDATE $? "Enabling Redis"
 
+sudo mkdir -p /var/lib/redis /var/run/redis
+sudo chown -R redis:redis /var/lib/redis /var/run/redis
+sudo systemctl restart redis
+
+
 sudo systemctl start redis &>>$LOG_FILE
 VALIDATE $? "Starting Redis"
 
