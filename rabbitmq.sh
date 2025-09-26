@@ -6,13 +6,12 @@ G="\e[32m"
 Y="\e[33m"
 N="\e[0m"
 
-LOGS_FOLDER="/var/log/shell-script"
+LOGS_FOLDER="/var/log/shell-roboshop"
 SCRIPT_NAME=$( echo $0 | cut -d "." -f1 )
-SCRIPT_DIR=$PWD
-
 LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log" # /var/log/shell-script/16-logs.log
 START_TIME=$(date +%s)
 mkdir -p $LOGS_FOLDER
+SCRIPT_DIR=$(PWD)
 echo "Script started executed at: $(date)" | tee -a $LOG_FILE
 
 if [ $USERID -ne 0 ]; then
@@ -28,18 +27,21 @@ VALIDATE(){ # functions receive inputs through args just like shell script args
         echo -e "$2 ... $G SUCCESS $N" | tee -a $LOG_FILE
     fi
 }
+cp $SCRIPT_DIR/rabbitmq.repo /etc/yum.repos.d/rabbitmq.repo
+VALIDATE $? "Adding rabbitmq repo"
 
-dnf install mysql-server -y
-VALIDATE $? "installing mysql-server -y"
+dnf install rabbitmq-server -y
+VALIDATE $? "installing rabbitmq-server -y"
 
-systemctl enable mysqld
-VALIDATE $? "enable mysqld"
+systemctl enable rabbitmq-server
+VALIDATE $? "enabling rabbitmq-server"
 
-systemctl start mysqld  
-VALIDATE $? "starting mysqld"
+systemctl start rabbitmq-server
+VALIDATE $? "starting rabbitmq-server"
 
-mysql_secure_installation --set-root-pass RoboShop@1
-VALIDATE $? "setting up root password"
+rabbitmqctl add_user roboshop roboshop123
+rabbitmqctl set_permissions -p / roboshop ".*" ".*" ".*"
+VALIDATE $? "Setting up permissions" 
 
 END_TIME=$(date +%s)
 TOTAL_TIME=$(( $END_TIME -  $START_TIME ))
