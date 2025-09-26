@@ -1,6 +1,5 @@
 #!bin/bash
 
-
 USERID=$(id -u)
 R="\e[31m"
 G="\e[32m"
@@ -19,7 +18,7 @@ if [ $USERID -ne 0 ]; then
     exit 1 # failure is other than 0
 fi
 
-VALIDATE() { # functions receive inputs through args just like shell script args
+VALIDATE(){ # functions receive inputs through args just like shell script args
     if [ $1 -ne 0 ]; then
         echo -e "$2 ... $R FAILURE $N" | tee -a $LOG_FILE
         exit 1
