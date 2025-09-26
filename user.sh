@@ -31,12 +31,15 @@ VALIDATE(){ # functions receive inputs through args just like shell script args
 }
 
 ##### NodeJS ####
-dnf module disable nodejs -y &>>$LOG_FILE
-VALIDATE $? "Disabling NodeJS"
-dnf module enable nodejs:20 -y  &>>$LOG_FILE
-VALIDATE $? "Enabling NodeJS 20"
-dnf install nodejs -y &>>$LOG_FILE
+yum remove -y nodejs &>>$LOG_FILE
+VALIDATE $? "Removing existing NodeJS"
+
+curl -sL https://rpm.nodesource.com/setup_20.x | bash &>>$LOG_FILE
+VALIDATE $? "Configuring NodeJS 20 repo"
+
+yum install -y nodejs &>>$LOG_FILE
 VALIDATE $? "Installing NodeJS"
+
 
 id roboshop &>>$LOG_FILE
 if [ $? -ne 0 ]; then
