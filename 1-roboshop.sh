@@ -4,7 +4,7 @@ AMI_ID="ami-09c813fb71547fc4f"
 SG_ID="sg-0d1e1b3241c4a66bd"
 ZONE_ID="Z10225341OKKJ5ODTVYKC"
 DOMINE_NAME="daws86.space"
-RECORD_NAME="mongodb"
+#RECORD_NAME="mongodb"
 
 for instance in $@ # mongodb redis mysql
 do
@@ -20,12 +20,12 @@ do
     fi
 
     echo "$instance: $IP"
-    aws route53 change-resource-record-sets --hosted-zone-id  --change-batch
+    #aws route53 change-resource-record-sets --hosted-zone-id  --change-batch
 
 
 #ZONE_ID=$(aws route53 list-hosted-zones --query "HostedZones[?Name=='$DOMAIN_NAME.'].Id" --output text | cut -d'/' -f3)
 
-    aws route53 change-resource-record-sets \ --hosted-zone-id $ZONE_ID \ --change-batch '
+    aws route53 change-resource-record-sets --hosted-zone-id $ZONE_ID --change-batch '
     {
         "Comment": "Updating record set"
         ,"Changes": [{
