@@ -44,3 +44,5 @@ VALIDATE $? "Allowing remote connections to MongoDB"
 
 systemctl restart mongod
 VALIDATE $? "Restarted MongoDB"
+
+sudo systemctl status mongod
