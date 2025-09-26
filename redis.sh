@@ -40,16 +40,6 @@ VALIDATE $? "Allowing Remote connections to Redis"
 systemctl enable redis &>>$LOG_FILE
 VALIDATE $? "Enabling Redis"
 
-# Check Redis service status
-sudo systemctl status redis -l --no-pager
-
-# If redis.service not found, try:
-sudo systemctl status redis-server -l --no-pager
-
-# Check recent logs
-sudo journalctl -u redis --no-pager | tail -20
-sudo journalctl -u redis-server --no-pager | tail -20
-
 systemctl start redis &>>$LOG_FILE
 VALIDATE $? "Starting Redis"
 
