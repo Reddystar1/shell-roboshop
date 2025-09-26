@@ -1,0 +1,12 @@
+[Unit]
+Description=Frontend service for Roboshop
+After=network.target mongod.service
+
+[Service]
+User=ec2-user
+WorkingDirectory=/home/ec2-user/shell-roboshop/frontend
+ExecStart=/usr/bin/node server.js
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
