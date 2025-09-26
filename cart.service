@@ -1,4 +1,4 @@
-#!bin/bash
+
 
 [Unit]
 Description = Cart Service
