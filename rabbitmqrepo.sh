@@ -1,4 +1,3 @@
-#!bin/bash
 [modern-erlang]
 name=modern-erlang-el9
 baseurl=https://yum1.novemberain.com/erlang/el/9/$basearch

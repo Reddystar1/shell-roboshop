@@ -1,4 +1,4 @@
-#!bin/bash
+#!/bin/bash
 
 USERID=$(id -u)
 R="\e[31m"
@@ -11,7 +11,7 @@ SCRIPT_NAME=$( echo $0 | cut -d "." -f1 )
 LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log" # /var/log/shell-script/16-logs.log
 START_TIME=$(date +%s)
 mkdir -p $LOGS_FOLDER
-SCRIPT_DIR=(PWD)
+SCRIPT_DIR=$PWD
 echo "Script started executed at: $(date)" | tee -a $LOG_FILE
 
 if [ $USERID -ne 0 ]; then
@@ -27,22 +27,19 @@ VALIDATE(){ # functions receive inputs through args just like shell script args
         echo -e "$2 ... $G SUCCESS $N" | tee -a $LOG_FILE
     fi
 }
+
 cp $SCRIPT_DIR/rabbitmq.repo /etc/yum.repos.d/rabbitmq.repo &>>$LOG_FILE
-VALIDATE $? "Adding rabbitmq repo"
-
+VALIDATE $? "Adding RabbitMQ repo"
 dnf install rabbitmq-server -y &>>$LOG_FILE
-VALIDATE $? "installing rabbitmq-server -y"
-
+VALIDATE $? "Installing RabbitMQ Server"
 systemctl enable rabbitmq-server &>>$LOG_FILE
-VALIDATE $? "enabling rabbitmq-server"
-
+VALIDATE $? "Enabling RabbitMQ Server"
 systemctl start rabbitmq-server &>>$LOG_FILE
-VALIDATE $? "starting rabbitmq-server"
-
+VALIDATE $? "Starting RabbitMQ"
 rabbitmqctl add_user roboshop roboshop123 &>>$LOG_FILE
-rabbitmqctl set_permissions -p / roboshop ".*" ".*" ".*"
-VALIDATE $? "Setting up permissions" 
+rabbitmqctl set_permissions -p / roboshop ".*" ".*" ".*" &>>$LOG_FILE
+VALIDATE $? "Setting up permissions"
 
 END_TIME=$(date +%s)
-TOTAL_TIME=$(( $END_TIME -  $START_TIME ))
-echo -e "script exicuted in: $Y $TOTAL_TIME seconds $N"
+TOTAL_TIME=$(( $END_TIME - $START_TIME ))
+echo -e "Script executed in: $Y $TOTAL_TIME Seconds $N"
