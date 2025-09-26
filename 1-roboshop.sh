@@ -3,11 +3,9 @@
 AMI_ID="ami-09c813fb71547fc4f"
 SG_ID="sg-0d1e1b3241c4a66bd"
 ZONE_ID="Z10225341OKKJ5ODTVYKC"
-#DOMINE_NAME="daws86.space"
+DOMINE_NAME="daws86.space"
 
-DOMAIN_NAME=daws86.space   # make sure this is set
-
-for instance in $@    # don't add "mongodb catalogue" here if you're passing them as args
+for instance in $@
 do
     INSTANCE_ID=$(aws ec2 run-instances \
       --image-id $AMI_ID \
@@ -16,17 +14,16 @@ do
       --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$instance}]" \
       --query 'Instances[0].InstanceId' --output text)
 
-    # Get Private IP
     if [ "$instance" != "frontend" ]; then
         IP=$(aws ec2 describe-instances \
           --instance-ids $INSTANCE_ID \
           --query 'Reservations[0].Instances[0].PrivateIpAddress' --output text)
-        RECORD_NAME="$instance.$DOMAIN_NAME"   # e.g. mongodb.daws86.space
+        RECORD_NAME="$instance.$DOMAIN_NAME"
     else
         IP=$(aws ec2 describe-instances \
           --instance-ids $INSTANCE_ID \
           --query 'Reservations[0].Instances[0].PublicIpAddress' --output text)
-        RECORD_NAME="$DOMAIN_NAME"             # e.g. daws86.space
+        RECORD_NAME="$DOMAIN_NAME"
     fi
 
     aws route53 change-resource-record-sets \
@@ -44,3 +41,4 @@ do
         }]
       }"
 done
+
