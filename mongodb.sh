@@ -45,8 +45,8 @@ VALIDATE $? "Allowing remote connections to MongoDB"
 systemctl restart mongod
 VALIDATE $? "Restarted MongoDB"
 
-systemctl npm install
-systemctl npm start
+sudo systemctl npm install
+sudo systemctl npm start
 
 
 sudo systemctl status mongod
