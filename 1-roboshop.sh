@@ -5,7 +5,7 @@ SG_ID="sg-0d1e1b3241c4a66bd"
 ZONE_ID="Z10225341OKKJ5ODTVYKC"
 DOMINE_NAME="daws86.space"
 
-DOMAIN_NAME=daws86.space   # make sure this is set
+#DOMAIN_NAME=daws86.space   # make sure this is set
 
 for instance in $@    # don't add "mongodb catalogue" here if you're passing them as args
 do
