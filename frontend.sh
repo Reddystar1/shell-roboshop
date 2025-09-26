@@ -7,8 +7,9 @@ Y="\e[33m"
 N="\e[0m"
 
 LOGS_FOLDER="/var/log/shell-roboshop"
-SCRIPT_NAME=$( echo $0 | cut -d "." -f1 )
+SCRIPT_NAME=$(basename $0 .sh)
 SCRIPT_DIR=$PWD
+MONGODB_HOST=mongodb.daws86.space
 LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log"
 
 mkdir -p $LOGS_FOLDER
@@ -50,15 +51,11 @@ else
     exit 1
 fi
 
-# Validate nginx config before restart
+# Validate nginx config
 nginx -t &>>$LOG_FILE
-sudo nginx -t
 VALIDATE $? "Validating Nginx config"
-sudo systemctl restart nginx
-VALIDATE $? "restart Nginx"
 
 # Enable and start nginx
 systemctl enable nginx &>>$LOG_FILE
 systemctl restart nginx &>>$LOG_FILE
-VALIDATE $? "Starting Nginx"
-
+VALIDATE $? "Enabling & Starting Nginx"
