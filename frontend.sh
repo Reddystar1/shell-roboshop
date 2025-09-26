@@ -29,30 +29,27 @@ VALIDATE(){ # functions receive inputs through args just like shell script args
     fi
 }
 
+dnf module list nginx &>>$LOG_FILE
+VALIDATE $? "List of nginx"
+
 dnf module disable nginx -y &>>$LOG_FILE
 dnf module enable nginx:1.24 -y &>>$LOG_FILE
 dnf install nginx -y &>>$LOG_FILE
-VALIDATE $? "Installing Nginx"
+VALIDATE $? "installing nginx"
 
-systemctl enable nginx  &>>$LOG_FILE
-VALIDATE $? "enabling Nginx"
-systemctl start nginx 
-VALIDATE $? "Starting Nginx"
+systemctl enable nginx &>>$LOG_FILE
+systemctl start nginx
+VALIDATE $? "stsrting nginx" 
 
 rm -rf /usr/share/nginx/html/* 
 curl -o /tmp/frontend.zip https://roboshop-artifacts.s3.amazonaws.com/frontend-v3.zip &>>$LOG_FILE
 cd /usr/share/nginx/html 
 unzip /tmp/frontend.zip &>>$LOG_FILE
-VALIDATE $? "Downloading frontend"
+VALIDATE $? "downloding frontend"
 
 rm -rf /etc/nginx/nginx.conf
-cp $SCRIPT_DIR/nginx.conf /etc/nginx/nginx.conf
-VALIDATE $? "Copying nginx.conf"
-
-
-sudo systemctl status nginx.service
-sudo journalctl -xeu nginx.service
-
+cp $SCRIPT_DIR/nginx.conf/etc/nginx/nginx.conf
+VALIDATE $? "coping nginx.conf"
 
 systemctl restart nginx 
-VALIDATE $? "Restarting Nginx"
+VALIDATE $? "Restarting nginx"
