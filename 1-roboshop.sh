@@ -20,8 +20,10 @@ do
     fi
 
     echo "$instance: $IP"
+    aws route53 change-resource-record-sets --hosted-zone-id  --change-batch
 
-ZONE_ID=$(aws route53 list-hosted-zones --query "HostedZones[?Name=='$DOMAIN_NAME.'].Id" --output text | cut -d'/' -f3)
+
+#ZONE_ID=$(aws route53 list-hosted-zones --query "HostedZones[?Name=='$DOMAIN_NAME.'].Id" --output text | cut -d'/' -f3)
 
     aws route53 change-resource-record-sets \ --hosted-zone-id $ZONE_ID \ --change-batch '
     {
