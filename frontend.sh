@@ -52,9 +52,13 @@ fi
 
 # Validate nginx config before restart
 nginx -t &>>$LOG_FILE
+sudo nginx -t
 VALIDATE $? "Validating Nginx config"
+sudo systemctl restart nginx
+VALIDATE $? "restart Nginx"
 
 # Enable and start nginx
 systemctl enable nginx &>>$LOG_FILE
 systemctl restart nginx &>>$LOG_FILE
 VALIDATE $? "Starting Nginx"
+
