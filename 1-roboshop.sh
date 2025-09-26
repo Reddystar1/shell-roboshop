@@ -13,7 +13,7 @@ do
     # Get Private IP
     if [ $instance != "frontend" ]; then
         IP=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID --query 'Reservations[0].Instances[0].PrivateIpAddress' --output text)
-        $RECORD_NAME="$instance.$DOMAIN_NAME" # mongodb.daws86s.fun
+        RECORD_NAME="$instance.$DOMAIN_NAME" # mongodb.daws86s.fun
     else
         IP=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID --query 'Reservations[0].Instances[0].PublicIpAddress' --output text)
         $RECORD_NAME="$DOMAIN_NAME" # daws86s.fun
